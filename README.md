@@ -18,3 +18,4 @@ src/
  ├── Domain          # Entities, Interfaces, Exceptions
  ├── Application     # DTOs, Services, Logic, Commands/Queries
  ├── Infrastructure  # Persistence, DB Context, External Services
+```

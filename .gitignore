@@ -1,0 +1,81 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+[Ll]og/
+[Ll]ogs/
+
+# Test output
+[Tt]est[Rr]esult*/
+[Bb]enchmarkDotNet.Artifacts/
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+
+# User-specific files
+*.rsuser
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# IDE folders/files
+.vs/
+.vscode/
+.idea/
+*.code-workspace
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+!packages/build/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Dotnet tooling
+.dotnet/
+dotnet-tools.json
+
+# ASP.NET / local config secrets
+appsettings.Development.json
+secrets.json
+
+# Keys, certs, and sensitive files
+*.pfx
+*.snk
+*.key
+*.pem
+*.crt
+*.jks
+*.keystore
+*.env
+.env
+.env.*
+!.env.example
+
+# Logs and runtime files
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated files
+Generated/
+wwwroot/dist/
+
