@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+﻿using Passwordmanager.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

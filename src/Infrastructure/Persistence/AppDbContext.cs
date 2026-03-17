@@ -1,4 +1,4 @@
-﻿using DefaultNamespace;
+﻿using Passwordmanager.Domain;
 using Microsoft.EntityFrameworkCore;
 using Passwordmanager.Application.Interfaces;
 

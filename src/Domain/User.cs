@@ -1,4 +1,4 @@
-﻿namespace DefaultNamespace;
+﻿namespace Passwordmanager.Domain;
 
 public class User
 {
