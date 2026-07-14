@@ -4,8 +4,8 @@ public class RefreshToken
 {
     public int Id { get; set; }
 
-    public int BenutzerId { get; set; }
-    public Benutzer Benutzer { get; set; } = null!;
+    public int UserId { get; set; }
+    public User User { get; set; } = null!;
 
     public string TokenHash { get; set; } = string.Empty;
 

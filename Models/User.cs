@@ -1,6 +1,6 @@
 namespace PasswordManager.Api.Models;
 
-public class Benutzer
+public class User
 {
     public int Id { get; set; }
 
