@@ -1,14 +1,23 @@
 using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 using PasswordManager.Api.Database;
 using PasswordManager.Api.Data;
 
+DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    var connection =
-        builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is missing.");
+    var connBuilder = new MySqlConnectionStringBuilder
+    {
+        Server = builder.Configuration["MYSQL_SERVER"],
+        Port = uint.Parse(builder.Configuration["MYSQL_PORT"]!),
+        Database = builder.Configuration["MYSQL_DATABASE"],
+        UserID = builder.Configuration["MYSQL_USER"],
+        Password = builder.Configuration["MYSQL_PASSWORD"]
+    };
+
+    var connection = connBuilder.ConnectionString;
 
     options.UseMySql(
         connection,
@@ -19,11 +28,6 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 await app.EnsureDatabaseCreatedAsync();
 

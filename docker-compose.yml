@@ -1,13 +1,10 @@
 ﻿services:
   mysql:
     image: mysql:8.4
-    container_name: mysql-db
+    container_name: passwort_manager-db
     restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: "zMK!5G08h$$J"
-      MYSQL_DATABASE: pw-manager
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: "8~35v466M&74"
+    env_file:
+      - .env
     ports:
       - "3306:3306"
     volumes:
