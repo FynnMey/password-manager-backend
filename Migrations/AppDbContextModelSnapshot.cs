@@ -82,9 +82,6 @@ namespace passwordmanagerbackend.Migrations
                     b.Property<bool>("IsPremium")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)

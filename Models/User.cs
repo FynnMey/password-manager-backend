@@ -19,9 +19,7 @@ public class User
     public bool IsAdmin { get; set; } = false;
 
     public int FailedLoginAttempts { get; set; } = 0;
-
-    public DateTime? LastLoginAt { get; set; }
-
+    
     public DateTime CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }

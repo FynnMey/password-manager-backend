@@ -2,33 +2,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace PasswordManager.Api.Controllers;
 
 [ApiController]
-[Route("api/users")]
+[Route("api/user")]
 public class UserController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly PasswordHasher<User> _hasher = new();
 
     public UserController(AppDbContext db)
     {
         _db = db;
     }
 
-    // GET api/users
-    [HttpGet]
-    public async Task<ActionResult<List<User>>> GetAll()
-    {
-        var users = await _db.Users
-            .AsNoTracking()
-            .OrderBy(user => user.Id)
-            .ToListAsync();
-
-        return Ok(users);
-    }
-
-    // POST api/users/create
+    // POST api/user/create
     [HttpPost("create")]
     public async Task<ActionResult<User>> Create(CreateUserRequest request)
     {
@@ -40,32 +30,25 @@ public class UserController : ControllerBase
         {
             return Conflict(new { message = "A user with this email already exists." });
         }
+        
+        
+        var passwordHash = _hasher.HashPassword(null, request.Password.Trim());
     
         var user = new User
         {
             Name = request.Name.Trim(),
-            Email = email
+            LastName = request.LastName.Trim(),
+            Email = email,
+            PasswordHash = passwordHash,
+			IsPremium = request.IsPremium,
+			IsAdmin = request.IsAdmin,
+			CreatedAt = DateTime.UtcNow,
+			UpdatedAt = DateTime.UtcNow
         };
     
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
     
         return Ok(user);
-    }
-    
-    // POST api/users
-    [HttpPost]
-    public async Task<ActionResult<User>> GetByEmail([FromBody] string email)
-    {
-        var user = await _db.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(b => b.Email == email.Trim());
-    
-        if (user is null)
-        {
-            return NotFound();
-        }
-    
-        return Ok(user);
-    }
+    }    
 }
