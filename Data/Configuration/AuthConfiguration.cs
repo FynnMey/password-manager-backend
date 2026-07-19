@@ -3,17 +3,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace PasswordManager.Api.Models;
 
-public class RefreshTokenConfiguration: IEntityTypeConfiguration<RefreshToken>
+public class AuthConfiguration: IEntityTypeConfiguration<Authentification>
 {
-    public void Configure(EntityTypeBuilder<RefreshToken> entity)
+    public void Configure(EntityTypeBuilder<Authentification> entity)
     {
-        entity.ToTable("refresh_token");
-
         entity.ToTable("refresh_token");
 
         entity.HasKey(rt => rt.Id);
 
-        entity.Property(rt => rt.TokenHash)
+        entity.Property(rt => rt.RefreshTokenHash)
+            .HasColumnName("TokenHash")
             .HasMaxLength(255)
             .IsRequired();
 
@@ -23,9 +22,7 @@ public class RefreshTokenConfiguration: IEntityTypeConfiguration<RefreshToken>
         entity.Property(rt => rt.CreatedAt)
             .IsRequired();
 
-        entity.HasOne(rt => rt.User)
-            .WithMany()
-            .HasForeignKey(rt => rt.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+        entity.HasIndex(rt => rt.RefreshTokenHash)
+            .IsUnique();
     }
 }

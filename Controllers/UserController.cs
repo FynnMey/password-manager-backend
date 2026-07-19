@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Data;
@@ -19,6 +20,7 @@ public class UserController : ControllerBase
     }
 
     // POST api/user/create
+    [Authorize]
     [HttpPost("create")]
     public async Task<ActionResult<User>> Create(CreateUserRequest request)
     {
