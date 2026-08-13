@@ -12,8 +12,6 @@ public class User
 
     public string PasswordHash { get; set; } = string.Empty;
 
-    public string? EncryptedVault { get; set; }
-
     public bool IsPremium { get; set; } = false;
 
     public bool IsAdmin { get; set; } = false;

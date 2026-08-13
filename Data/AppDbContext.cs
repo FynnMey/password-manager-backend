@@ -10,6 +10,8 @@ public class AppDbContext : DbContext
     { }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Vault> Vaults => Set<Vault>();
+    public DbSet<Collection> Collections => Set<Collection>();
 	public DbSet<Authentification> RefreshToken => Set<Authentification>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

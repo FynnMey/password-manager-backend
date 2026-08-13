@@ -55,7 +55,11 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-await app.EnsureDatabaseCreatedAsync();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

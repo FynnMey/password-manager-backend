@@ -52,5 +52,5 @@ public class UserController : ControllerBase
         await _db.SaveChangesAsync();
     
         return Ok(user);
-    }    
+    }  
 }

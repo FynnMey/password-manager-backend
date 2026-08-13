@@ -30,9 +30,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(255)
             .IsRequired();
 
-        entity.Property(user => user.EncryptedVault)
-            .IsRequired(false);
-
         entity.Property(user => user.IsPremium)
             .IsRequired();
 
