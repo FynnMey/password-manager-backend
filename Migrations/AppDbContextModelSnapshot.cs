@@ -119,6 +119,11 @@ namespace passwordmanagerbackend.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasMaxLength(44)
+                        .HasColumnType("varchar(44)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 

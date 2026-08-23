@@ -25,6 +25,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         entity.HasIndex(user => user.Email)
             .IsUnique();
+        
+        entity.Property(user => user.Salt)
+            .HasMaxLength(44)
+            .IsRequired();
 
         entity.Property(user => user.PasswordHash)
             .HasMaxLength(255)
