@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,28 @@ public class UserController : ControllerBase
     {
         _db = db;
     }
+    
+    // POST api/user/register
+    [Authorize]
+    [HttpPost("register")]
+    public async Task<ActionResult> Register(RegisterUser request)
+    {
+        var  userId = User.FindFirstValue((ClaimTypes.NameIdentifier));
+        
+        if (string.IsNullOrWhiteSpace(request.CanaryValue))
+            return BadRequest(new { message = "Invalid canary value." });
+        
+        if (string.IsNullOrWhiteSpace(request.Salt))
+            return BadRequest(new { message = "Invalid salt." });
+
+        _db.Users.Where(user => user.Id == userId)
+            .ExecuteUpdate<User>(b => b
+                .SetProperty(user => user.Salt, request.Salt)
+                .SetProperty(user => user.CanaryValue, request.CanaryValue)
+            );
+
+        return Ok();
+    }
 
     // POST api/user/create
     [Authorize]
@@ -34,10 +57,11 @@ public class UserController : ControllerBase
         }
         
         
-        var passwordHash = _hasher.HashPassword(null, request.Password.Trim());
+        var passwordHash = _hasher.HashPassword(new User(), request.Password.Trim());
     
         var user = new User
         {
+            Id = Guid.NewGuid().ToString(),
             Name = request.Name.Trim(),
             LastName = request.LastName.Trim(),
             Email = email,

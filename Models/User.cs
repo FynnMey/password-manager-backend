@@ -2,7 +2,7 @@ namespace PasswordManager.Api.Models;
 
 public class User
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;
 
@@ -13,6 +13,8 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     
     public string Salt { get; set; } = string.Empty;
+    
+    public string CanaryValue { get; set; } = string.Empty;
 
     public bool IsPremium { get; set; } = false;
 

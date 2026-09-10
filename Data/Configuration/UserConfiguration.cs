@@ -10,6 +10,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         entity.ToTable("users");
 
         entity.HasKey(user => user.Id);
+        
+        entity.Property(user => user.Id)
+            .HasMaxLength(36)
+            .IsRequired()
+            .ValueGeneratedNever();
 
         entity.Property(user => user.Name)
             .HasMaxLength(100)
@@ -29,6 +34,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         entity.Property(user => user.Salt)
             .HasMaxLength(44)
             .IsRequired();
+        
+        entity.Property(user => user.CanaryValue)
+            .HasMaxLength(255);
 
         entity.Property(user => user.PasswordHash)
             .HasMaxLength(255)

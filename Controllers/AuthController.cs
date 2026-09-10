@@ -79,6 +79,7 @@ public class AuthController : ControllerBase
 
         _db.RefreshToken.Add(new Authentification
         {
+            Id = Guid.NewGuid().ToString(),
             UserId = user.Id,
             RefreshTokenHash = _tokens.HashRefreshToken(refreshToken),
             CreatedAt = DateTime.UtcNow,
@@ -131,6 +132,7 @@ public class AuthController : ControllerBase
         var expiresAt = DateTime.UtcNow.Add(TokenService.RefreshTokenLifetime);
         _db.RefreshToken.Add(new Authentification
         {
+            Id = Guid.NewGuid().ToString(),
             UserId = user.Id,
             RefreshTokenHash = _tokens.HashRefreshToken(newRefreshToken),
             CreatedAt = DateTime.UtcNow,
@@ -158,12 +160,12 @@ public class AuthController : ControllerBase
         }
 
         DeleteRefreshCookie();
-        return NoContent();
+        return Ok();
     }
 
     private static object CreateResponse(User user, string accessToken) => new
     {
         accessToken,
-        user = new { user.Id, user.Name, user.LastName, user.Email, user.IsPremium, user.IsAdmin }
+        user = new { user.Id, user.Name, user.LastName, user.Email, user.IsPremium, user.IsAdmin, user.CanaryValue, user.Salt }
     };
 }

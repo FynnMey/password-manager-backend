@@ -7,22 +7,63 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace passwordmanagerbackend.Migrations
 {
     /// <inheritdoc />
-    public partial class fixVaultProblemAndCreatVaultAndCollectionTable : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_refresh_token_users_UserId",
-                table: "refresh_token");
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.DropIndex(
-                name: "IX_refresh_token_UserId",
-                table: "refresh_token");
+            migrationBuilder.CreateTable(
+                name: "refresh_token",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserId = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TokenHash = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    RevokedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_refresh_token", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.DropColumn(
-                name: "EncryptedVault",
-                table: "users");
+            migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "varchar(36)", maxLength: 36, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PasswordHash = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Salt = table.Column<string>(type: "varchar(44)", maxLength: 44, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CanaryValue = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsPremium = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsAdmin = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "collection",
@@ -30,7 +71,8 @@ namespace passwordmanagerbackend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(36)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -52,7 +94,8 @@ namespace passwordmanagerbackend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "varchar(36)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
@@ -63,7 +106,7 @@ namespace passwordmanagerbackend.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Note = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CollectionId = table.Column<int>(type: "int", nullable: false),
+                    CollectionId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EditAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -74,8 +117,7 @@ namespace passwordmanagerbackend.Migrations
                         name: "FK_vault_collection_CollectionId",
                         column: x => x.CollectionId,
                         principalTable: "collection",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_vault_users_UserId",
                         column: x => x.UserId,
@@ -86,15 +128,21 @@ namespace passwordmanagerbackend.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_collection_UserId",
+                table: "collection",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_refresh_token_TokenHash",
                 table: "refresh_token",
                 column: "TokenHash",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_collection_UserId",
-                table: "collection",
-                column: "UserId");
+                name: "IX_users_Email",
+                table: "users",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_vault_CollectionId",
@@ -111,34 +159,16 @@ namespace passwordmanagerbackend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "refresh_token");
+
+            migrationBuilder.DropTable(
                 name: "vault");
 
             migrationBuilder.DropTable(
                 name: "collection");
 
-            migrationBuilder.DropIndex(
-                name: "IX_refresh_token_TokenHash",
-                table: "refresh_token");
-
-            migrationBuilder.AddColumn<string>(
-                name: "EncryptedVault",
-                table: "users",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_refresh_token_UserId",
-                table: "refresh_token",
-                column: "UserId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_refresh_token_users_UserId",
-                table: "refresh_token",
-                column: "UserId",
-                principalTable: "users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.DropTable(
+                name: "users");
         }
     }
 }

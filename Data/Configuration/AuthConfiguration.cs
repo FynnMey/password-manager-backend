@@ -11,6 +11,15 @@ public class AuthConfiguration: IEntityTypeConfiguration<Authentification>
 
         entity.HasKey(rt => rt.Id);
 
+        entity.Property(rt => rt.Id)
+            .HasMaxLength(36)
+            .IsRequired()
+            .ValueGeneratedNever();
+
+        entity.Property(rt => rt.UserId)
+            .HasMaxLength(36)
+            .IsRequired();
+
         entity.Property(rt => rt.RefreshTokenHash)
             .HasColumnName("TokenHash")
             .HasMaxLength(255)

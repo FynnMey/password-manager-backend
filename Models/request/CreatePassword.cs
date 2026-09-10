@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace PasswordManager.Api.Models;
 
 public class CreatePassword
 {
     [Required]
-    public int UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
     
     [Required]
     [MaxLength(255)]
