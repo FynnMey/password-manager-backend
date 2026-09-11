@@ -71,10 +71,10 @@ using (var scope = app.Services.CreateScope())
     await dbContext.Database.MigrateAsync();
 }
 
+app.UseCors("AllowClient");
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("AllowClient");
 
 app.MapControllers();
 

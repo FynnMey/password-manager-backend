@@ -5,9 +5,6 @@ namespace PasswordManager.Api.Models;
 public class CreatePassword
 {
     [Required]
-    public string UserId { get; set; } = string.Empty;
-    
-    [Required]
     [MaxLength(255)]
     public string Name { get; set; } = string.Empty;
     

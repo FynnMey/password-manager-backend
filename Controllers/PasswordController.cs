@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
@@ -18,11 +19,16 @@ public class PasswordController : ControllerBase
 
     [Authorize]
     [HttpPost("create")]
-    public async Task<ActionResult<Boolean>> Create(CreatePassword request)
+    public async Task<ActionResult<Vault>> Create(CreatePassword request)
     {
+        var  userId = User.FindFirstValue((ClaimTypes.NameIdentifier));
+        
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest();
+        
         var vault = new Vault
         {
-            UserId = request.UserId, 
+            UserId = userId, 
             
             Name = request.Name,
             Email = request.Email,
@@ -34,7 +40,20 @@ public class PasswordController : ControllerBase
         _db.Vaults.Add(vault);
         await _db.SaveChangesAsync();
         
+        return Ok(vault);
+    }
+    
+    [Authorize]
+    [HttpPost("get-all")]
+    public async Task<ActionResult<Vault>> GetAllFromUser()
+    {
+        var  userId = User.FindFirstValue((ClaimTypes.NameIdentifier));
         
-        return true;
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest();
+        
+        var userVault = _db.Vaults.Where(vault => vault.UserId == userId);
+        
+        return Ok(userVault);
     }
 }

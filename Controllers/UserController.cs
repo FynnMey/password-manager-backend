@@ -23,7 +23,7 @@ public class UserController : ControllerBase
     // POST api/user/register
     [Authorize]
     [HttpPost("register")]
-    public async Task<ActionResult> Register(RegisterUser request)
+    public ActionResult Register(RegisterUser request)
     {
         var  userId = User.FindFirstValue((ClaimTypes.NameIdentifier));
         
