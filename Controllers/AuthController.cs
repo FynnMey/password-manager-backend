@@ -41,7 +41,7 @@ public class AuthController : ControllerBase
         Response.Cookies.Append(RefreshCookie, refreshToken, new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
+            Secure = false, // nur für test umgebung in produktion auf true setzen
             SameSite = SameSiteMode.Strict,
             Expires = new DateTimeOffset(expiresAt),
             Path = "/api/auth"
@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
     private void DeleteRefreshCookie() => Response.Cookies.Delete(RefreshCookie, new CookieOptions
     {
         HttpOnly = true,
-        Secure = true,
+        Secure = false, // nur für test umgebung in produktion auf true setzen
         SameSite = SameSiteMode.Strict,
         Path = "/api/auth"
     });

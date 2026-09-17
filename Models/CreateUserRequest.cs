@@ -13,7 +13,6 @@ public class CreateUserRequest
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    [EmailAddress]
     [MaxLength(255)]
     public string Email { get; set; } = string.Empty;
     

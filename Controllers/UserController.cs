@@ -43,7 +43,6 @@ public class UserController : ControllerBase
     }
 
     // POST api/user/create
-    [Authorize]
     [HttpPost("create")]
     public async Task<ActionResult<User>> Create(CreateUserRequest request)
     {
