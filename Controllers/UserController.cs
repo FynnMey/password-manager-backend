@@ -10,15 +10,9 @@ namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController : ControllerBase
+public class UserController(AppDbContext db) : ControllerBase
 {
-    private readonly AppDbContext _db;
     private readonly PasswordHasher<User> _hasher = new();
-
-    public UserController(AppDbContext db)
-    {
-        _db = db;
-    }
     
     // POST api/user/register
     [Authorize]
@@ -33,7 +27,7 @@ public class UserController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Salt))
             return BadRequest(new { message = "Invalid salt." });
 
-        _db.Users.Where(user => user.Id == userId)
+        db.Users.Where(user => user.Id == userId)
             .ExecuteUpdate<User>(b => b
                 .SetProperty(user => user.Salt, request.Salt)
                 .SetProperty(user => user.CanaryValue, request.CanaryValue)
@@ -47,7 +41,7 @@ public class UserController : ControllerBase
     public async Task<ActionResult<User>> Create(CreateUserRequest request)
     {
         var email = request.Email.Trim();
-        var emailExists = await _db.Users
+        var emailExists = await db.Users
             .AnyAsync(user => user.Email == email);
     
         if (emailExists)
@@ -71,8 +65,8 @@ public class UserController : ControllerBase
 			UpdatedAt = DateTime.UtcNow
         };
     
-        _db.Users.Add(user);
-        await _db.SaveChangesAsync();
+        db.Users.Add(user);
+        await db.SaveChangesAsync();
     
         return Ok(user);
     }  

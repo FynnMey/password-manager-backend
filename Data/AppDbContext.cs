@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Vault> Vaults => Set<Vault>();
     public DbSet<Collection> Collections => Set<Collection>();
 	public DbSet<Authentification> RefreshToken => Set<Authentification>();
+	public DbSet<Icon> Icons => Set<Icon>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

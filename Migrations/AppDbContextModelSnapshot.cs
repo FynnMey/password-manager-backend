@@ -80,6 +80,20 @@ namespace passwordmanagerbackend.Migrations
                     b.ToTable("collection", (string)null);
                 });
 
+            modelBuilder.Entity("PasswordManager.Api.Models.Icon", b =>
+                {
+                    b.Property<string>("Url")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Url");
+
+                    b.ToTable("icons", (string)null);
+                });
+
             modelBuilder.Entity("PasswordManager.Api.Models.User", b =>
                 {
                     b.Property<string>("Id")
