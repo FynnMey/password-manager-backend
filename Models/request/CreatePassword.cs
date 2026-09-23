@@ -17,7 +17,6 @@ public class CreatePassword
     [MaxLength(255)]
     public string Website { get; set; } = string.Empty;
     
-    [MaxLength(255)]
     public string Note { get; set; } = string.Empty;
     
     public int CollectionId { get; set; }

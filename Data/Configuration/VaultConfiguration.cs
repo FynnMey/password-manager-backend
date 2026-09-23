@@ -24,6 +24,6 @@ public class VaultConfiguration : IEntityTypeConfiguration<Vault>
             .HasMaxLength(255);
 
         entity.Property(vault => vault.Note)
-            .HasMaxLength(255);
+            .HasColumnType("text");
     }
 }

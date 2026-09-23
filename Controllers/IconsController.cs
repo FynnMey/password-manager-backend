@@ -17,7 +17,7 @@ public class IconsController(AppDbContext db) : BaseApiController
     public async Task<ActionResult<ApiResponse<string>>> GetIconForUrl(GetIconRequest request)
     {
         if (!Uri.TryCreate(request.Url, UriKind.Absolute, out var uri))
-            return Failure<string>(500, "Server Error", "Url is not valid.");
+            return Failure<string>(500, "Server Error", "Url is not valid. (https://domain.com)");
 
         var baseUrl = uri.Host;
         Console.WriteLine(baseUrl);
