@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PasswordManager.Api.Common;
 using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
 
@@ -8,52 +10,53 @@ namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/user/password")]
-public class PasswordController : ControllerBase
+public class PasswordController(AppDbContext db) : BaseApiController
 {
-    private readonly AppDbContext _db;
-    
-    public PasswordController(AppDbContext db)
-    {
-        _db = db;
-    }
-
     [Authorize]
     [HttpPost("create")]
-    public async Task<ActionResult<Vault>> Create(CreatePassword request)
+    public async Task<ActionResult<ApiResponse<Vault>>> Create(CreatePassword request)
     {
-        var  userId = User.FindFirstValue((ClaimTypes.NameIdentifier));
-        
+        var userId = GetUserId();
+
         if (string.IsNullOrEmpty(userId))
-            return BadRequest();
+            return UnauthorizedUser<Vault>();
         
         var vault = new Vault
         {
             UserId = userId, 
             
-            Name = request.Name,
-            Email = request.Email,
-            Password = request.Password,
-            Website = request.Website,
-            Note = request.Note,
+            EncryptedName = request.EncryptedName,
+            EncryptedEmail = request.EncryptedEmail,
+            EncryptedPassword = request.EncryptedPassword,
+            EncryptedWebsite = request.EncryptedWebsite,
+            EncryptedNote = request.EncryptedNote,
         };
         
-        _db.Vaults.Add(vault);
-        await _db.SaveChangesAsync();
+        db.Vaults.Add(vault);
+        await db.SaveChangesAsync();
         
-        return Ok(vault);
+        return Success(vault);
     }
     
     [Authorize]
     [HttpPost("get-all")]
-    public async Task<ActionResult<Vault>> GetAllFromUser()
+    public async Task<ActionResult<ApiResponse<List<Vault>>>> GetAllFromUser()
     {
-        var  userId = User.FindFirstValue((ClaimTypes.NameIdentifier));
-        
+        var userId = GetUserId();
+
         if (string.IsNullOrEmpty(userId))
-            return BadRequest();
+            return UnauthorizedUser<List<Vault>>();
         
-        var userVault = _db.Vaults.Where(vault => vault.UserId == userId);
+        var userVault = await db.Vaults
+            .AsNoTracking()
+            .Where(vault => vault.UserId == userId)
+            .ToListAsync();
         
-        return Ok(userVault);
+        return Success(userVault);
+    }
+    
+    private string? GetUserId()
+    {
+        return User.FindFirstValue((ClaimTypes.NameIdentifier));
     }
 }

@@ -6,18 +6,18 @@ public class CreatePassword
 {
     [Required]
     [MaxLength(255)]
-    public string Name { get; set; } = string.Empty;
+    public string EncryptedName { get; set; } = string.Empty;
     
     [MaxLength(255)]
-    public string Email { get; set; } = string.Empty;
+    public string EncryptedEmail { get; set; } = string.Empty;
     
     [MaxLength(255)]
-    public string Password { get; set; } = string.Empty;
+    public string EncryptedPassword { get; set; } = string.Empty;
     
     [MaxLength(255)]
-    public string Website { get; set; } = string.Empty;
+    public string EncryptedWebsite { get; set; } = string.Empty;
     
-    public string Note { get; set; } = string.Empty;
+    public string EncryptedNote { get; set; } = string.Empty;
     
     public int CollectionId { get; set; }
 }

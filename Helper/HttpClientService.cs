@@ -8,7 +8,6 @@ public class HttpClientService
 
     public async Task<byte[]> GetByteArrayAsync(string domain)
     {
-        
         return await Client.GetByteArrayAsync(domain);
     }
 }

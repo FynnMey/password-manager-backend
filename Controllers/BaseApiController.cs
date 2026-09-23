@@ -15,4 +15,9 @@ public abstract class BaseApiController : ControllerBase
     {
         return StatusCode(statusCode, ApiResponse<T>.Fail(code, message));
     }
+    
+    protected ActionResult<ApiResponse<T>> UnauthorizedUser<T>()
+    {
+        return Failure<T>(401, "UNAUTHORIZED", "No user could be found in the token.");
+    }
 }

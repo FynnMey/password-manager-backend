@@ -11,19 +11,19 @@ public class VaultConfiguration : IEntityTypeConfiguration<Vault>
         
         entity.HasKey(vault => vault.Id);
 
-        entity.Property(vault => vault.Name)
+        entity.Property(vault => vault.EncryptedName)
             .HasMaxLength(255);
 
-        entity.Property(vault => vault.Email)
+        entity.Property(vault => vault.EncryptedEmail)
             .HasMaxLength(255);
 
-        entity.Property(vault => vault.Password)
+        entity.Property(vault => vault.EncryptedPassword)
             .HasMaxLength(255);
 
-        entity.Property(vault => vault.Website)
+        entity.Property(vault => vault.EncryptedWebsite)
             .HasMaxLength(255);
 
-        entity.Property(vault => vault.Note)
+        entity.Property(vault => vault.EncryptedNote)
             .HasColumnType("text");
     }
 }

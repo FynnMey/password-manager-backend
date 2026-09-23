@@ -11,16 +11,17 @@ namespace PasswordManager.Api.Controllers;
 [Route("api/icon")]
 public class IconsController(AppDbContext db) : BaseApiController
 {
-    
-    // POST api/icon
     [HttpPost]
     public async Task<ActionResult<ApiResponse<string>>> GetIconForUrl(GetIconRequest request)
     {
         if (!Uri.TryCreate(request.Url, UriKind.Absolute, out var uri))
-            return Failure<string>(500, "Server Error", "Url is not valid. (https://domain.com)");
+            return Failure<string>(
+                400, 
+                "INVALID_URL", 
+                "The provided URL is invalid. It must be an absolute URL (e.g., https://domain.com)."
+                );
 
         var baseUrl = uri.Host;
-        Console.WriteLine(baseUrl);
 
         var existingIcon = await db.Icons.FirstOrDefaultAsync(icon => icon.Url == baseUrl);
 
@@ -29,7 +30,7 @@ public class IconsController(AppDbContext db) : BaseApiController
         
 
         var client = new HttpClientService();
-        var data = null as byte[];
+        byte[] data;
 
         try
         {
@@ -37,7 +38,11 @@ public class IconsController(AppDbContext db) : BaseApiController
         }
         catch
         {
-            return Failure<string>(502, "IconFetchFailed", "Could not retrieve icon for domain '" + baseUrl + "' from external provider.");
+            return Failure<string>(
+                502, 
+                "ICON_FETCH_FAILED", 
+                "Could not retrieve icon for domain '\" + baseUrl + \"' from external provider."
+                );
         }
 
         var image = string.Concat("data:image/png;base64,", Convert.ToBase64String(data));
