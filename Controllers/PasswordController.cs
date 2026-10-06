@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Common;
 using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
+using PasswordManager.Api.Services;
 
 namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/user/password")]
-public class PasswordController(AppDbContext db) : BaseApiController
+public class PasswordController(AppDbContext db, IUuidGenerator uuidGenerator) : BaseApiController
 {
     [Authorize]
     [HttpPost("create")]
@@ -23,6 +24,7 @@ public class PasswordController(AppDbContext db) : BaseApiController
         
         var vault = new Vault
         {
+            Id = uuidGenerator.NewUuid(),
             UserId = userId, 
             
             EncryptedName = request.EncryptedName,
@@ -37,7 +39,18 @@ public class PasswordController(AppDbContext db) : BaseApiController
         
         return Success(vault);
     }
-    
+
+    [Authorize]
+    [HttpPost("update")]
+    public async Task<ActionResult<ApiResponse<Vault>>> Update(UpdatePassword request)
+    {
+        var userId = GetUserId();
+
+        var vault = new Vault();
+            
+        return Success(vault);
+    }
+
     [Authorize]
     [HttpPost("get-all")]
     public async Task<ActionResult<ApiResponse<List<Vault>>>> GetAllFromUser()

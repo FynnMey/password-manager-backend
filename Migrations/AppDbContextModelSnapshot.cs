@@ -155,11 +155,8 @@ namespace passwordmanagerbackend.Migrations
 
             modelBuilder.Entity("PasswordManager.Api.Models.Vault", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int?>("CollectionId")
                         .HasColumnType("int");

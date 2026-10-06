@@ -1,26 +1,24 @@
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace PasswordManager.Api.Models;
 
-public class Vault
+public class UpdatePassword
 {
-    public string Id  { get; set; }
+    [Required]
+    public string Id { get; set; } = string.Empty;
     
-    public string UserId { get; set; } = string.Empty;
-    public User User { get; set; } = null!;
-
     public string EncryptedName { get; set; } = string.Empty;
     
+    [MaxLength(255)]
     public string EncryptedEmail { get; set; } = string.Empty;
     
+    [MaxLength(255)]
     public string EncryptedPassword { get; set; } = string.Empty;
     
+    [MaxLength(255)]
     public string EncryptedWebsite { get; set; } = string.Empty;
     
     public string EncryptedNote { get; set; } = string.Empty;
     
-    public int? CollectionId { get; set; }
-    public Collection? Collection { get; set; }
-    
-    public DateTime CreatedAt { get; set; }
-    
-    public DateTime EditAt { get; set; }
+    public int CollectionId { get; set; }
 }

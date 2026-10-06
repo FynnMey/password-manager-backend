@@ -5,6 +5,7 @@ using MySqlConnector;
 using PasswordManager.Api.Database;
 using PasswordManager.Api.Data;
 using System.Text;
+using PasswordManager.Extensions;
 
 DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,7 @@ var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
     ?? throw new InvalidOperationException("JWT_SECRET is missing in environment variables.");
 
 builder.Services.AddSingleton<PasswordManager.Api.Services.TokenService>();
+builder.Services.AddApplicationServices();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
