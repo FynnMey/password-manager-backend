@@ -5,9 +5,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using PasswordManager.Api.Models;
 
-namespace PasswordManager.Api.Services;
+namespace PasswordManager.Services.TokenService;
 
-public class TokenService
+public class TokenService : ITokenService
 {
     public const string Issuer = "PasswordManager.Api";
     public const string Audience = "PasswordManager.Client";
@@ -19,7 +19,7 @@ public class TokenService
     public TokenService()
     {
         var secret = Environment.GetEnvironmentVariable("JWT_SECRET")
-            ?? throw new InvalidOperationException("JWT_SECRET is not set");
+                     ?? throw new InvalidOperationException("JWT_SECRET is not set");
 
         _key = Encoding.UTF8.GetBytes(secret);
         if (_key.Length < 32)

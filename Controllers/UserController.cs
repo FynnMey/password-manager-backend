@@ -6,16 +6,14 @@ using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using PasswordManager.Api.Common;
+using PasswordManager.Services.PasswordHasherService;
 
 namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController(AppDbContext db) : BaseApiController
+public class UserController(AppDbContext db, IPasswordHasherService passwordHasherService) : BaseApiController
 {
-    private readonly PasswordHasher<User> _hasher = new();
-    
-    // POST api/user/register
     [Authorize]
     [HttpPost("register")]
     public ActionResult<ApiResponse<bool>> Register(RegisterUser request)
@@ -48,7 +46,7 @@ public class UserController(AppDbContext db) : BaseApiController
         if (emailExists)
             return Failure<User>(400, "EMAIL_NOT_FOUND", "The specified email address does not exist.");
         
-        var passwordHash = _hasher.HashPassword(new User(), request.Password.Trim());
+        var passwordHash = passwordHasherService.Hash(request.Password.Trim());
     
         var user = new User
         {

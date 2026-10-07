@@ -4,31 +4,28 @@ using PasswordManager.Api.Data;
 using Microsoft.AspNetCore.Identity;
 using PasswordManager.Api.Common;
 using PasswordManager.Api.Controllers;
-using PasswordManager.Api.Services;
 using PasswordManager.DTOs.Auth;
+using PasswordManager.Services.PasswordHasherService;
+using PasswordManager.Services.TokenService;
 
 namespace PasswordManager.Api.Models;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(AppDbContext db, TokenService tokens) : BaseApiController
+public class AuthController(
+    AppDbContext db, 
+    ITokenService tokenService,
+    IPasswordHasherService passwordHasherService
+    ) : BaseApiController
 {
-    private readonly PasswordHasher<User> _hasher = new();
     private const string RefreshCookie = "refreshToken";
     
     private readonly string _errorMessageMissingToken = "Refresh token is missing";
     private readonly string _invalidCredentials = "Invalid credentials";
-    
-    
-    private bool VerifyPassword(User user, string providedPassword)
-    {
-        var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, providedPassword);
-        return result is PasswordVerificationResult.Success or PasswordVerificationResult.SuccessRehashNeeded;
-    }
 
     private string GetAccessToken(User user)
     {
-        return tokens.GenerateAccessToken(user);
+        return tokenService.GenerateAccessToken(user);
     }
 
     private void SetRefreshCookie(string refreshToken, DateTime expiresAt)
@@ -64,18 +61,18 @@ public class AuthController(AppDbContext db, TokenService tokens) : BaseApiContr
         var user = await db.Users
             .FirstOrDefaultAsync(b => b.Email == email);
 
-        if (user is null || !VerifyPassword(user, password))
+        if (user is null || !passwordHasherService.Verify(password, user.PasswordHash))
             return UnauthorizedUser<AuthResponse>(_invalidCredentials);
 
         var accessToken = GetAccessToken(user);
-        var refreshToken = tokens.GenerateRefreshToken();
+        var refreshToken = tokenService.GenerateRefreshToken();
         var expiresAt = DateTime.UtcNow.Add(TokenService.RefreshTokenLifetime);
 
         db.RefreshToken.Add(new Authentification
         {
             Id = Guid.NewGuid().ToString(),
             UserId = user.Id,
-            RefreshTokenHash = tokens.HashRefreshToken(refreshToken),
+            RefreshTokenHash = tokenService.HashRefreshToken(refreshToken),
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = expiresAt
         });
@@ -92,7 +89,7 @@ public class AuthController(AppDbContext db, TokenService tokens) : BaseApiContr
             string.IsNullOrWhiteSpace(refreshToken))
             return UnauthorizedUser<AuthResponse>(_errorMessageMissingToken);
 
-        var tokenHash = tokens.HashRefreshToken(refreshToken);
+        var tokenHash = tokenService.HashRefreshToken(refreshToken);
         var storedToken = await db.RefreshToken
             .AsNoTracking()
             .FirstOrDefaultAsync(token => token.RefreshTokenHash == tokenHash);
@@ -123,13 +120,13 @@ public class AuthController(AppDbContext db, TokenService tokens) : BaseApiContr
             return UnauthorizedUser<AuthResponse>(_errorMessageMissingToken);
         }
 
-        var newRefreshToken = tokens.GenerateRefreshToken();
+        var newRefreshToken = tokenService.GenerateRefreshToken();
         var expiresAt = DateTime.UtcNow.Add(TokenService.RefreshTokenLifetime);
         db.RefreshToken.Add(new Authentification
         {
             Id = Guid.NewGuid().ToString(),
             UserId = user.Id,
-            RefreshTokenHash = tokens.HashRefreshToken(newRefreshToken),
+            RefreshTokenHash = tokenService.HashRefreshToken(newRefreshToken),
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = expiresAt
         });
@@ -145,7 +142,7 @@ public class AuthController(AppDbContext db, TokenService tokens) : BaseApiContr
     {
         if (Request.Cookies.TryGetValue(RefreshCookie, out var refreshToken))
         {
-            var tokenHash = tokens.HashRefreshToken(refreshToken);
+            var tokenHash = tokenService.HashRefreshToken(refreshToken);
             var storedToken = await db.RefreshToken
                 .FirstOrDefaultAsync(token => token.RefreshTokenHash == tokenHash && token.RevokedAt == null);
             if (storedToken is not null)

@@ -31,7 +31,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
     ?? throw new InvalidOperationException("JWT_SECRET is missing in environment variables.");
 
-builder.Services.AddSingleton<PasswordManager.Api.Services.TokenService>();
 builder.Services.AddApplicationServices();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -42,9 +41,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
             ValidateIssuer = true,
-            ValidIssuer = PasswordManager.Api.Services.TokenService.Issuer,
+            ValidIssuer = PasswordManager.Services.TokenService.TokenService.Issuer,
             ValidateAudience = true,
-            ValidAudience = PasswordManager.Api.Services.TokenService.Audience,
+            ValidAudience = PasswordManager.Services.TokenService.TokenService.Audience,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };

@@ -4,12 +4,13 @@ using PasswordManager.Api.Common;
 using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
 using PasswordManager.Api.Services;
+using PasswordManager.Services.HttpClientService;
 
 namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/icon")]
-public class IconsController(AppDbContext db) : BaseApiController
+public class IconsController(AppDbContext db, IHttpClientService httpClientService) : BaseApiController
 {
     [HttpPost]
     public async Task<ActionResult<ApiResponse<string>>> GetIconForUrl(GetIconRequest request)
@@ -29,12 +30,11 @@ public class IconsController(AppDbContext db) : BaseApiController
             return Success(existingIcon.Image); 
         
 
-        var client = new HttpClientService();
         byte[] data;
 
         try
         {
-            data = await client.GetByteArrayAsync("https://www.google.com/s2/favicons?domain=" + baseUrl + "&sz=128");
+            data = await httpClientService.GetByteArrayAsync("https://www.google.com/s2/favicons?domain=" + baseUrl + "&sz=128");
         }
         catch
         {
