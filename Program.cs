@@ -10,45 +10,11 @@ using PasswordManager.Extensions;
 DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var connBuilder = new MySqlConnectionStringBuilder
-    {
-        Server = builder.Configuration["MYSQL_SERVER"],
-        Port = uint.Parse(builder.Configuration["MYSQL_PORT"]!),
-        Database = builder.Configuration["MYSQL_DATABASE"],
-        UserID = builder.Configuration["MYSQL_USER"],
-        Password = builder.Configuration["MYSQL_PASSWORD"]
-    };
-
-    var connection = connBuilder.ConnectionString;
-
-    options.UseMySql(
-        connection,
-        ServerVersion.AutoDetect(connection));
-});
-
-var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
-    ?? throw new InvalidOperationException("JWT_SECRET is missing in environment variables.");
+builder.Services.AddDatabase(builder.Configuration);
 
 builder.Services.AddApplicationServices();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
-            ValidateIssuer = true,
-            ValidIssuer = PasswordManager.Services.TokenService.TokenService.Issuer,
-            ValidateAudience = true,
-            ValidAudience = PasswordManager.Services.TokenService.TokenService.Audience,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
-        };
-    });
-
+builder.Services.AddJwtAuthentication();
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();

@@ -5,7 +5,7 @@ using PasswordManager.Services.TokenService;
 
 namespace PasswordManager.Extensions;
 
-public static class DependencyInjection
+public static class ServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
