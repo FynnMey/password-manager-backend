@@ -41,14 +41,44 @@ public class PasswordController(AppDbContext db, IUuidGenerator uuidGenerator) :
     }
 
     [Authorize]
+    [HttpPost("delete")]
+    public async Task<ActionResult<ApiResponse<bool>>> Delete(DeletePassword request)
+    {
+        var userId = GetUserId();
+    
+        var deletedCount = await db.Vaults
+            .Where(vault => vault.Id == request.Id && vault.UserId == userId)
+            .ExecuteDeleteAsync();
+
+        if (deletedCount == 0)
+            return UnauthorizedUser<bool>(); 
+        
+        return Success(true);
+    }
+    
+    [Authorize]
     [HttpPost("update")]
     public async Task<ActionResult<ApiResponse<Vault>>> Update(UpdatePassword request)
     {
         var userId = GetUserId();
+    
+        var existingVault = await db.Vaults
+            .FirstOrDefaultAsync(vault => vault.Id == request.Id && vault.UserId == userId);
 
-        var vault = new Vault();
-            
-        return Success(vault);
+        if (existingVault is null)
+            return Failure<Vault>(404, "Not Found", "Vault not found");
+
+        existingVault.EncryptedName = request.EncryptedName ?? existingVault.EncryptedName;
+        existingVault.EncryptedEmail = request.EncryptedEmail ?? existingVault.EncryptedEmail;
+        existingVault.EncryptedPassword = request.EncryptedPassword ?? existingVault.EncryptedPassword;
+        existingVault.EncryptedWebsite = request.EncryptedWebsite ?? existingVault.EncryptedWebsite;
+        existingVault.EncryptedNote = request.EncryptedNote ?? existingVault.EncryptedNote;
+    
+        existingVault.EditAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+    
+        return Success(existingVault);
     }
 
     [Authorize]

@@ -17,7 +17,7 @@ public class IconsController(AppDbContext db, IHttpClientService httpClientServi
     {
         if (!Uri.TryCreate(request.Url, UriKind.Absolute, out var uri))
             return Failure<string>(
-                400, 
+                200, 
                 "INVALID_URL", 
                 "The provided URL is invalid. It must be an absolute URL (e.g., https://domain.com)."
                 );
@@ -39,7 +39,7 @@ public class IconsController(AppDbContext db, IHttpClientService httpClientServi
         catch
         {
             return Failure<string>(
-                502, 
+                200, 
                 "ICON_FETCH_FAILED", 
                 "Could not retrieve icon for domain '\" + baseUrl + \"' from external provider."
                 );
