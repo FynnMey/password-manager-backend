@@ -31,12 +31,15 @@ public class TokenService : ITokenService
         var securityKey = new SymmetricSecurityKey(_key);
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
+        
+        if (user.IsAdmin)
+            claims.Add(new Claim(ClaimTypes.Role, "Admin")); 
 
         var token = new JwtSecurityToken(
             issuer: Issuer,

@@ -94,6 +94,30 @@ namespace passwordmanagerbackend.Migrations
                     b.ToTable("icons", (string)null);
                 });
 
+            modelBuilder.Entity("PasswordManager.Api.Models.PremiumCode", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("DurationInDays")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("RedeemedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("RedeemedByUserId")
+                        .HasColumnType("varchar(36)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("RedeemedByUserId");
+
+                    b.ToTable("premium_code", (string)null);
+                });
+
             modelBuilder.Entity("PasswordManager.Api.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -119,9 +143,6 @@ namespace passwordmanagerbackend.Migrations
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("IsPremium")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -136,6 +157,9 @@ namespace passwordmanagerbackend.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime?>("PremiumUntil")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Salt")
                         .IsRequired()
@@ -213,6 +237,16 @@ namespace passwordmanagerbackend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PasswordManager.Api.Models.PremiumCode", b =>
+                {
+                    b.HasOne("PasswordManager.Api.Models.User", "RedeemedByUser")
+                        .WithMany()
+                        .HasForeignKey("RedeemedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("RedeemedByUser");
                 });
 
             modelBuilder.Entity("PasswordManager.Api.Models.Vault", b =>

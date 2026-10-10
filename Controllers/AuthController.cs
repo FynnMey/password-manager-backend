@@ -50,7 +50,7 @@ public class AuthController(
     
     [HttpPost]
     [HttpPost("login")]
-    public async Task<ActionResult<ApiResponse<AuthResponse>>> Login(GetUserRequest request)
+    public async Task<ActionResult<ApiResponse<AuthResponse>>> Login(GetUser request)
     {
         var email = request.Email.Trim();
         var password = request.Password;
@@ -163,7 +163,7 @@ public class AuthController(
             user.Name, 
             user.LastName, 
             user.Email, 
-            user.IsPremium, 
+            user.PremiumUntil is not null && user.PremiumUntil > DateTime.UtcNow, 
             user.IsAdmin, 
             user.CanaryValue, 
             user.Salt

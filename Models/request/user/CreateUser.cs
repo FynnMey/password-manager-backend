@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PasswordManager.Api.Models;
 
-public class CreateUserRequest
+public class CreateUser
 {
     [Required]
     [MaxLength(100)]
@@ -20,6 +20,6 @@ public class CreateUserRequest
     [MaxLength(255)]
     public string Password { get; set; } = string.Empty;
 
-    public bool IsPremium { get; set; } = false;
+    public DateTime PremiumUntil { get; set; }
     public bool IsAdmin { get; set; } = false;
 }

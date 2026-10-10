@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PasswordManager.Api.Models;
 
-public class GetUserRequest
+public class GetUser
 {
     [Required]
     [MaxLength(255)]

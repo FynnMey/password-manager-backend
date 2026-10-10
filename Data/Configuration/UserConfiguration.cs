@@ -42,8 +42,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasMaxLength(255)
             .IsRequired();
 
-        entity.Property(user => user.IsPremium)
-            .IsRequired();
+        entity.Property(user => user.PremiumUntil);
 
         entity.Property(user => user.IsAdmin)
             .IsRequired();

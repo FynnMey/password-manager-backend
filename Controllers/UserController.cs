@@ -35,9 +35,9 @@ public class UserController(AppDbContext db, IPasswordHasherService passwordHash
         return Success(true);
     }
 
-    // POST api/user/create
+    [Authorize(Roles = "Admin")]
     [HttpPost("create")]
-    public async Task<ActionResult<ApiResponse<User>>> Create(CreateUserRequest request)
+    public async Task<ActionResult<ApiResponse<User>>> Create(CreateUser request)
     {
         var email = request.Email.Trim();
         var emailExists = await db.Users
@@ -55,7 +55,7 @@ public class UserController(AppDbContext db, IPasswordHasherService passwordHash
             LastName = request.LastName.Trim(),
             Email = email,
             PasswordHash = passwordHash,
-			IsPremium = request.IsPremium,
+			PremiumUntil = request.PremiumUntil,
 			IsAdmin = request.IsAdmin,
 			CreatedAt = DateTime.UtcNow,
 			UpdatedAt = DateTime.UtcNow

@@ -16,7 +16,7 @@ public class User
     
     public string CanaryValue { get; set; } = string.Empty;
 
-    public bool IsPremium { get; set; } = false;
+    public DateTime? PremiumUntil { get; set; }
 
     public bool IsAdmin { get; set; } = false;
 

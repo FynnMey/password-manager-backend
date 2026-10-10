@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Collection> Collections => Set<Collection>();
 	public DbSet<Authentification> RefreshToken => Set<Authentification>();
 	public DbSet<Icon> Icons => Set<Icon>();
+    public DbSet<PremiumCode> PremiumCodes => Set<PremiumCode>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
