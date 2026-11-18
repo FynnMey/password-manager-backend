@@ -24,10 +24,18 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowClient", policy =>
     {
-        policy.WithOrigins("http://localhost:9000")
+        policy.SetIsOriginAllowed(origin => true)
             .AllowAnyMethod()
             .AllowCredentials()
             .AllowAnyHeader();
+    });
+});
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Listen(System.Net.IPAddress.Any, 5000, listenOptions =>
+    {
+        listenOptions.UseHttps("aspnetapp.pfx", "changeit");
     });
 });
 
