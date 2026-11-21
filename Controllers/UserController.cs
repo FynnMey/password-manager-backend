@@ -7,12 +7,13 @@ using PasswordManager.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using PasswordManager.Api.Common;
 using PasswordManager.Services.PasswordHasherService;
+using PasswordManager.Services.UserService;
 
 namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController(AppDbContext db, IPasswordHasherService passwordHasherService) : BaseApiController
+public class UserController(AppDbContext db, IUserService userService) : BaseApiController
 {
     [Authorize]
     [HttpPost("register")]
@@ -39,31 +40,11 @@ public class UserController(AppDbContext db, IPasswordHasherService passwordHash
     [HttpPost("create")]
     public async Task<ActionResult<ApiResponse<User>>> Create(CreateUser request)
     {
-        var email = request.Email.Trim();
-        var emailExists = await db.Users
-            .AnyAsync(user => user.Email == email);
+        var (user, errorCode, errorMessage) = await userService.CreateUserAsync(request);
 
-        if (emailExists)
-            return Failure<User>(400, "EMAIL_NOT_FOUND", "The specified email address does not exist.");
-        
-        var passwordHash = passwordHasherService.Hash(request.Password.Trim());
-    
-        var user = new User
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = request.Name.Trim(),
-            LastName = request.LastName.Trim(),
-            Email = email,
-            PasswordHash = passwordHash,
-			PremiumUntil = request.PremiumUntil,
-			IsAdmin = request.IsAdmin,
-			CreatedAt = DateTime.UtcNow,
-			UpdatedAt = DateTime.UtcNow
-        };
-    
-        db.Users.Add(user);
-        await db.SaveChangesAsync();
-    
+        if (user is null)
+            return Failure<User>(400, errorCode!, errorMessage!);
+
         return Success(user);
     }
 }

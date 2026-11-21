@@ -31,9 +31,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Production (Docker): plain HTTP on 8080, TLS is terminated by the Caddy reverse proxy.
-// Local development: HTTPS on 5000 with the dev certificate.
-if (builder.Environment.IsProduction())
+if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
 {
     builder.WebHost.ConfigureKestrel(options =>
     {
