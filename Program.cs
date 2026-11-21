@@ -31,13 +31,25 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.WebHost.ConfigureKestrel(options =>
+// Production (Docker): plain HTTP on 8080, TLS is terminated by the Caddy reverse proxy.
+// Local development: HTTPS on 5000 with the dev certificate.
+if (builder.Environment.IsProduction())
 {
-    options.Listen(System.Net.IPAddress.Any, 5000, listenOptions =>
+    builder.WebHost.ConfigureKestrel(options =>
     {
-        listenOptions.UseHttps("aspnetapp.pfx", "changeit");
+        options.Listen(System.Net.IPAddress.Any, 8080);
     });
-});
+}
+else
+{
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.Listen(System.Net.IPAddress.Any, 5000, listenOptions =>
+        {
+            listenOptions.UseHttps("aspnetapp.pfx", "changeit");
+        });
+    });
+}
 
 var app = builder.Build();
 

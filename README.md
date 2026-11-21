@@ -19,3 +19,5 @@ Update the database schema with any pending migrations:
 ```bash
 dotnet ef database update
 ```
+
+docker compose -f docker-compose.prod.yml up -d

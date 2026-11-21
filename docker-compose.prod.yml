@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: passwort_manager-db
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: ghcr.io/${GITHUB_USER}/password-manager-backend:${APP_TAG:-latest}
+    container_name: passwort_manager-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_SERVER: mysql
+      MYSQL_PORT: "3306"
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    container_name: passwort_manager-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - app
+
+volumes:
+  mysql_data:
+  caddy_data:
