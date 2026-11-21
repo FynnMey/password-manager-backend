@@ -21,25 +21,13 @@ services:
       MYSQL_SERVER: mysql
       MYSQL_PORT: "3306"
       ASPNETCORE_ENVIRONMENT: Production
+    ports:
+      - "8080:8080"
     depends_on:
       mysql:
         condition: service_healthy
 
-  caddy:
-    image: caddy:2
-    container_name: passwort_manager-proxy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      DOMAIN: ${DOMAIN}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-    depends_on:
-      - app
 
 volumes:
   mysql_data:
-  caddy_data:
+
