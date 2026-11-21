@@ -21,12 +21,18 @@ services:
       MYSQL_SERVER: mysql
       MYSQL_PORT: "3306"
       ASPNETCORE_ENVIRONMENT: Production
-    ports:
-      - "8080:8080"
+    networks:
+      - default
+      - proxy
     depends_on:
       mysql:
         condition: service_healthy
 
+
+networks:
+  proxy:
+    external: true
+    name: proxy
 
 volumes:
   mysql_data:
