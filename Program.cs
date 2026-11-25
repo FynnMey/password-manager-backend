@@ -1,10 +1,5 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using MySqlConnector;
-using PasswordManager.Api.Database;
 using PasswordManager.Api.Data;
-using System.Text;
 using PasswordManager.Extensions;
 
 DotNetEnv.Env.Load();
