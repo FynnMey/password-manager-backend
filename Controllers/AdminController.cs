@@ -23,7 +23,7 @@ public class AdminController(
         return Success(adminUser is not null);
     }
     
-    [HttpGet("create")]
+    [HttpPost("create")]
     public async Task<ActionResult<ApiResponse<bool>>> Create(CreateUser request)
     {
         var (user, errorCode, errorMessage) = await userService.CreateUserAsync(request);
