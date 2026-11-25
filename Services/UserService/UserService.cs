@@ -2,9 +2,8 @@
 using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
 using PasswordManager.Services.PasswordHasherService;
-using PasswordManager.Services.UserService;
 
-namespace password;
+namespace PasswordManager.Services.UserService;
 
 public class UserService(AppDbContext db, IPasswordHasherService passwordHasherService) : IUserService
 {
@@ -33,5 +32,16 @@ public class UserService(AppDbContext db, IPasswordHasherService passwordHasherS
         await db.SaveChangesAsync();
 
         return (user, null, null);
+    }
+
+    public bool UpdateSaltAndCarnary(string? userId, RegisterUser request)
+    {
+        var updatedRows = db.Users.Where(user => user.Id == userId)
+            .ExecuteUpdate(b => b
+                .SetProperty(user => user.Salt, request.Salt)
+                .SetProperty(user => user.CanaryValue, request.CanaryValue)
+            );
+
+        return updatedRows > 0;
     }
 }
