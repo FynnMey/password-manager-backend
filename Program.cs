@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Api.Data;
+using PasswordManager.Api.Database;
 using PasswordManager.Extensions;
 
 DotNetEnv.Env.Load();

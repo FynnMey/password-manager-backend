@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Common;
-using PasswordManager.Api.Data;
+using PasswordManager.Api.Database;
 using PasswordManager.Api.Models;
 using PasswordManager.Api.Services;
 

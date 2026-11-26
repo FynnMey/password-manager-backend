@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Common;
 using PasswordManager.Api.Controllers;
-using PasswordManager.Api.Data;
+using PasswordManager.Api.Database;
 using PasswordManager.Api.Models;
 using PasswordManager.Services.UserService;
 

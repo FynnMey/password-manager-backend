@@ -1,19 +1,16 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PasswordManager.Api.Data;
 using PasswordManager.Api.Models;
-using Microsoft.AspNetCore.Identity;
 using PasswordManager.Api.Common;
-using PasswordManager.Services.PasswordHasherService;
+using PasswordManager.Api.Database;
 using PasswordManager.Services.UserService;
 
 namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserController(AppDbContext db, IUserService userService) : BaseApiController
+public class UserController(IUserService userService) : BaseApiController
 {
     [Authorize]
     [HttpPost("register")]
@@ -25,8 +22,7 @@ public class UserController(AppDbContext db, IUserService userService) : BaseApi
         if (string.IsNullOrWhiteSpace(request.Salt))
             return Failure<bool>(400, "INVALID_SALT", "The salt is missing or invalid.");
 
-        var  userId = User.FindFirstValue((ClaimTypes.NameIdentifier));
-        var isSuccess = userService.UpdateSaltAndCarnary(userId, request);
+        var isSuccess = userService.UpdateSaltAndCarnary(request);
 
         return Success(isSuccess);
     }

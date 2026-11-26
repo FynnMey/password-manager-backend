@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
-using PasswordManager.Api.Data;
+using PasswordManager.Api.Database;
 using passwordmanagerbackend.Migrations;
 
 namespace PasswordManager.Extensions;

@@ -20,4 +20,10 @@ Update the database schema with any pending migrations:
 dotnet ef database update
 ```
 
-docker compose -f docker-compose.prod.yml up -d
+
+docker compose -f docker-compose.prod.yml pull app
+docker compose -f docker-compose.prod.yml up -d app
+
+oder 
+
+docker compose -f docker-compose.prod.yml up -d --pull always app

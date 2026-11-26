@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PasswordManager.Api.Data;
+using PasswordManager.Api.Database;
 using Microsoft.AspNetCore.Identity;
 using PasswordManager.Api.Common;
 using PasswordManager.Api.Controllers;

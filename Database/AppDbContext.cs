@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Models;
 
-namespace PasswordManager.Api.Data;
+namespace PasswordManager.Api.Database;
 
 public class AppDbContext : DbContext
 {

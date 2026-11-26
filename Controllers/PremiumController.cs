@@ -1,19 +1,20 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PasswordManager.Api.Common;
 using PasswordManager.Api.Controllers;
-using PasswordManager.Api.Data;
+using PasswordManager.Api.Database;
 using PasswordManager.Api.Models;
 using PasswordManager.Api.Models.premium;
 using PasswordManager.Api.Services;
+using PasswordManager.Services.PremiumService;
+using PasswordManager.Services.UserService;
 
 namespace PasswordManager.Controllers;
 
 [ApiController]
 [Route("api/premium")]
-public class PremiumController(AppDbContext db, IUuidGenerator uuidGenerator) : BaseApiController
+public class PremiumController(AppDbContext db, IUuidGenerator uuidGenerator, IPremiumService premiumService) : BaseApiController
 {
     [Authorize(Roles = "Admin")]
     [HttpPost("create")]
@@ -43,27 +44,13 @@ public class PremiumController(AppDbContext db, IUuidGenerator uuidGenerator) : 
         
         if (userId is null)
             return UnauthorizedUser<bool>();
+        
+        var (isSuccess, errorCode, errorMessage) = await premiumService.ActivatePremiumCode(request);
+        
+        if (isSuccess == true)
+            return Success(true);
 
-        var premiumCode = await db.PremiumCodes.FirstOrDefaultAsync(code => code.Code == request.Code);
-        
-        if (premiumCode is null || premiumCode.IsUsed)
-            return Success(false);
-
-        var user = await db.Users.FirstOrDefaultAsync(user => user.Id == userId);
-        
-        if (user is null)
-            return Failure<bool>(400, "USER_NOT_FOUND", "The specified user does not exist.");
-            
-        user.PremiumUntil = premiumCode.DurationInDays is null 
-            ? DateTime.MaxValue 
-            : DateTime.UtcNow.AddDays(premiumCode.DurationInDays.Value);
-        
-        premiumCode.RedeemedByUserId = userId;
-        premiumCode.RedeemedAt = DateTime.UtcNow;
-
-        await db.SaveChangesAsync();
-        
-        return Success(true);
+        return Failure<bool>(400, errorCode!, errorMessage!);
     }
     
     private string? GetUserId()
