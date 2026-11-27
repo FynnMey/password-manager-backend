@@ -34,14 +34,13 @@ public class PasswordController(AppDbContext db, ICurrentUserService currentUser
     [HttpPost("delete")]
     public async Task<ActionResult<ApiResponse<bool>>> Delete(DeletePassword request)
     {
-        var userId = GetUserId();
-    
-        var deletedCount = await db.Vaults
-            .Where(vault => vault.Id == request.Id && vault.UserId == userId)
-            .ExecuteDeleteAsync();
+        if (string.IsNullOrEmpty(currentUserService.UserId))
+            return UnauthorizedUser<bool>();
+        
+        var (isSuccess, errorCode, errorMessage) = await passwordService.DeletePasswordByCurrentUserAsync(request.Id);
 
-        if (deletedCount == 0)
-            return UnauthorizedUser<bool>(); 
+        if (isSuccess == false)
+            return Failure<bool>(400, errorCode!, errorMessage!);
         
         return Success(true);
     }
@@ -50,46 +49,29 @@ public class PasswordController(AppDbContext db, ICurrentUserService currentUser
     [HttpPost("update")]
     public async Task<ActionResult<ApiResponse<Vault>>> Update(UpdatePassword request)
     {
-        var userId = GetUserId();
+        if (string.IsNullOrEmpty(currentUserService.UserId))
+            return UnauthorizedUser<Vault>();
     
-        var existingVault = await db.Vaults
-            .FirstOrDefaultAsync(vault => vault.Id == request.Id && vault.UserId == userId);
+        var (vault, errorCode, errorMessage) = await passwordService.UpdatePasswordByCurrentUserAsync(request);
 
-        if (existingVault is null)
-            return Failure<Vault>(404, "Not Found", "Vault not found");
-
-        existingVault.EncryptedName = request.EncryptedName ?? existingVault.EncryptedName;
-        existingVault.EncryptedEmail = request.EncryptedEmail ?? existingVault.EncryptedEmail;
-        existingVault.EncryptedPassword = request.EncryptedPassword ?? existingVault.EncryptedPassword;
-        existingVault.EncryptedWebsite = request.EncryptedWebsite ?? existingVault.EncryptedWebsite;
-        existingVault.EncryptedNote = request.EncryptedNote ?? existingVault.EncryptedNote;
+        if (vault is null)
+            return Failure<Vault>(400, errorCode!, errorMessage!);
     
-        existingVault.EditAt = DateTime.UtcNow;
-
-        await db.SaveChangesAsync();
-    
-        return Success(existingVault);
+        return Success(vault);
     }
 
     [Authorize]
     [HttpPost("get-all")]
     public async Task<ActionResult<ApiResponse<List<Vault>>>> GetAllFromUser()
     {
-        var userId = GetUserId();
-
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(currentUserService.UserId))
             return UnauthorizedUser<List<Vault>>();
+
+        var (userVault, errorCode, errorMessage) = await passwordService.GetVaultByCurrentUserAsync();
         
-        var userVault = await db.Vaults
-            .AsNoTracking()
-            .Where(vault => vault.UserId == userId)
-            .ToListAsync();
-        
+        if (userVault is null)
+            return Failure<List<Vault>>(400, errorCode!, errorMessage!);
         return Success(userVault);
-    }
-    
-    private string? GetUserId()
-    {
-        return User.FindFirstValue((ClaimTypes.NameIdentifier));
+        
     }
 }
