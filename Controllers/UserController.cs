@@ -1,9 +1,7 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PasswordManager.Api.Models;
 using PasswordManager.Api.Common;
-using PasswordManager.Api.Database;
 using PasswordManager.Services.UserService;
 
 namespace PasswordManager.Api.Controllers;

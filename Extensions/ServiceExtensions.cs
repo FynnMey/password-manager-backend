@@ -2,6 +2,7 @@
 using PasswordManager.Services.CurrentUserService;
 using PasswordManager.Services.HttpClientService;
 using PasswordManager.Services.PasswordHasherService;
+using PasswordManager.Services.PasswordService;
 using PasswordManager.Services.PremiumService;
 using PasswordManager.Services.TokenService;
 using PasswordManager.Services.UserService;
@@ -21,6 +22,7 @@ public static class ServiceExtensions
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<IPremiumService, PremiumService>();
+        services.AddSingleton<IPasswordService, PasswordService>();
         
         return services;
     }

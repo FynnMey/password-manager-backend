@@ -6,36 +6,26 @@ using PasswordManager.Api.Common;
 using PasswordManager.Api.Database;
 using PasswordManager.Api.Models;
 using PasswordManager.Api.Services;
+using PasswordManager.Services.CurrentUserService;
+using PasswordManager.Services.PasswordService;
 
 namespace PasswordManager.Api.Controllers;
 
 [ApiController]
 [Route("api/user/password")]
-public class PasswordController(AppDbContext db, IUuidGenerator uuidGenerator) : BaseApiController
+public class PasswordController(AppDbContext db, ICurrentUserService currentUserService, IPasswordService passwordService) : BaseApiController
 {
     [Authorize]
     [HttpPost("create")]
     public async Task<ActionResult<ApiResponse<Vault>>> Create(CreatePassword request)
     {
-        var userId = GetUserId();
-
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(currentUserService.UserId))
             return UnauthorizedUser<Vault>();
+
+        var (vault, errorCode, errorMessage) = await passwordService.CreateCurrentUserVault(request);
         
-        var vault = new Vault
-        {
-            Id = uuidGenerator.NewUuid(),
-            UserId = userId, 
-            
-            EncryptedName = request.EncryptedName,
-            EncryptedEmail = request.EncryptedEmail,
-            EncryptedPassword = request.EncryptedPassword,
-            EncryptedWebsite = request.EncryptedWebsite,
-            EncryptedNote = request.EncryptedNote,
-        };
-        
-        db.Vaults.Add(vault);
-        await db.SaveChangesAsync();
+        if (vault is null)
+            return Failure<Vault>(400, errorCode!, errorMessage!);
         
         return Success(vault);
     }
